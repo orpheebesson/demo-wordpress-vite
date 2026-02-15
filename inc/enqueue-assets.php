@@ -2,8 +2,7 @@
 
 function registerCustomAssets() {
     $vite_server = 'http://localhost:5173';
-    $response = wp_remote_get($vite_server);
-    $is_dev = !is_wp_error($response);
+    $is_dev = wp_get_environment_type() === 'development';
 
     if ($is_dev) {
         wp_enqueue_script_module('vite-client', $vite_server . '/@vite/client', [], null);
