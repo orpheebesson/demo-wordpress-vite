@@ -2,9 +2,9 @@
 
 function registerCustomAssets() {
     $vite_server = 'http://localhost:5173';
-    $is_dev = wp_get_environment_type() === 'development';
+    $enable_vite = isViteRunning($vite_server);
 
-    if ($is_dev) {
+    if ($enable_vite) {
         wp_enqueue_script_module('vite-client', $vite_server . '/@vite/client', [], null);
         wp_enqueue_script_module('my-theme', $vite_server . '/src/js/main.js', [], null);
     } else {
@@ -34,3 +34,15 @@ function registerCustomAssets() {
 }
 
 add_action('wp_enqueue_scripts', 'registerCustomAssets');
+
+function isViteRunning($vite_server) {
+    if (wp_get_environment_type() !== 'development') {
+        return false;
+    }
+
+    $response = wp_remote_get($vite_server, [
+        'timeout' => 0.5,
+    ]);
+
+    return !is_wp_error($response);
+}
